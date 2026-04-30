@@ -1,0 +1,11 @@
+
+
+if [[ -d src/ ]]; then
+	cd src/
+else
+	echo "src/ doesn't exist"
+	exit 1
+fi
+
+options="-d src/ -Xlint"
+javac *.java

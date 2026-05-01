@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.io.InputStreamReader;
 import java.lang.Exception;
 import java.io.IOException;
+import java.net.InetAddress;
 
 
 public class Network_Client
@@ -21,9 +22,12 @@ public class Network_Client
 	{
 		try
 		{
-			clientSocket = new Socket(ipAddr, port);
-			messagePrint = new PrintWriter(clientSocket.getOutputStream());
+			InetAddress ipNet = InetAddress.getByName(ipAddr);
+			clientSocket = new Socket(ipNet, port);
+			messagePrint = new PrintWriter(clientSocket.getOutputStream(), true);
 			messageReceive = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()) );
+			System.out.println("client: " + ipNet.getHostAddress() + ":" + port);
+			System.out.println(clientSocket.toString());
 		}
 		catch(IOException e)
 		{
@@ -54,13 +58,16 @@ public class Network_Client
 		try
 		{
 			messagePrint.println(message);
+			System.out.println("client sent: " + message);
 			String response = messageReceive.readLine();
+			System.out.println("Client received: " + response);
 			return response;
 		}
 		catch(IOException e)
 		{
 			System.out.println(e);
-			return null;
 		}
+
+		return "";
 	}
 }

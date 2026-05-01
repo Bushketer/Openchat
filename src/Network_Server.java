@@ -34,13 +34,14 @@ public class Network_Server
 			while((message = messageReceive.readLine()) != null)
 			{
 				System.out.println("Server caught: " + message);
-				messagePrint.println(message);
 
 				if(message.equals("exit"))
 				{
 					messagePrint.println("stopping");
 					break;
 				}
+
+				messagePrint.println(message);
 			}
 			
 			stopServer();

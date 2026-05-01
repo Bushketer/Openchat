@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 if [[ -d src/ ]]; then
+	echo "building src/"
 	cd src/
 else
-	echo "src/ doesn't exist"
-	exit 1
+	echo "building locally"
 fi
 
 options="-d src/ -Xlint"

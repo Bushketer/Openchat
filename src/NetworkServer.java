@@ -9,11 +9,11 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 
 
-public class Network_Server
+public class NetworkServer
 {		
 	ServerSocket serverSocket;
 	Socket clientSocket;
-	private PrintWriter messagePrint;
+	private PrintWriter messageSend;
 	private BufferedReader messageReceive;
 
 
@@ -23,32 +23,32 @@ public class Network_Server
 		{
 			serverSocket = new ServerSocket(port);
 			clientSocket = serverSocket.accept();
-			messagePrint = new PrintWriter(clientSocket.getOutputStream(), true);
+			messageSend = new PrintWriter(clientSocket.getOutputStream(), true);
 			messageReceive = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()) );
 			
 			String message;
-			System.out.println(serverSocket.toString());
-			System.out.println("=============================");
-			System.out.println("Client: " + clientSocket.toString());
-			System.out.println("catching messages");
+			Utility.toTerminaln(serverSocket.toString());
+			Utility.toTerminaln("=============================");
+			Utility.toTerminaln("Client: " + clientSocket.toString());
+			Utility.toTerminaln("catching messages");
 			while((message = messageReceive.readLine()) != null)
 			{
-				System.out.println("Server caught: " + message);
+				Utility.toTerminaln("Server caught: " + message);
 
 				if(message.equals("exit"))
 				{
-					messagePrint.println("stopping");
+					messageSend.println("stopping");
 					break;
 				}
 
-				messagePrint.println(message);
+				messageSend.println(message);
 			}
 			
 			stopServer();
 		}
 		catch(IOException e)
 		{
-			System.out.println(e);
+			//TO-DO
 		}
 
 	}
@@ -58,15 +58,15 @@ public class Network_Server
 	{
 		try
 		{
-			System.out.println("Stopping server");
-			messagePrint.close();
+			Utility.toTerminaln("Stopping server");
+			messageSend.close();
 			messageReceive.close();
 			clientSocket.close();
 			serverSocket.close();
 		}
 		catch(IOException e)
 		{
-			System.out.println(e);
+			//TO-DO
 		}
 	}
 }

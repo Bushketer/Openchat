@@ -9,10 +9,10 @@ import java.io.IOException;
 import java.net.InetAddress;
 
 
-public class Network_Client
+public class NetworkClient
 {
-	Socket clientSocket;
-	PrintWriter messagePrint;
+	Socket communicationSocket;
+	PrintWriter messageSend;
 	BufferedReader messageReceive;
 
 
@@ -23,15 +23,15 @@ public class Network_Client
 		try
 		{
 			InetAddress ipNet = InetAddress.getByName(ipAddr);
-			clientSocket = new Socket(ipNet, port);
-			messagePrint = new PrintWriter(clientSocket.getOutputStream(), true);
-			messageReceive = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()) );
-			System.out.println("client: " + ipNet.getHostAddress() + ":" + port);
-			System.out.println(clientSocket.toString());
+			communicationSocket = new Socket(ipNet, port);
+			messageSend = new PrintWriter(communicationSocket.getOutputStream(), true);
+			messageReceive = new BufferedReader(new InputStreamReader(communicationSocket.getInputStream()) );
+			Utility.toTerminaln("client: " + ipNet.getHostAddress() + ":" + port);
+			Utility.toTerminaln(communicationSocket.toString());
 		}
 		catch(IOException e)
 		{
-			System.out.println(e);
+		//TO-DO
 		}
 	}
 
@@ -41,13 +41,13 @@ public class Network_Client
 	{
 		try
 		{
-			messagePrint.close();
+			messageSend.close();
 			messageReceive.close();
-			clientSocket.close();
+			communicationSocket.close();
 		}
 		catch(IOException e)
 		{
-			System.out.println(e);
+			//TO-DO
 		}
 	}
 
@@ -57,15 +57,15 @@ public class Network_Client
 	{
 		try
 		{
-			messagePrint.println(message);
-			System.out.println("client sent: " + message);
+			messageSend.println(message);
+			Utility.toTerminaln("client sent: " + message);
 			String response = messageReceive.readLine();
-			System.out.println("Client received: " + response);
+			Utility.toTerminaln("Client received: " + response);
 			return response;
 		}
 		catch(IOException e)
 		{
-			System.out.println(e);
+			//TO-DO
 		}
 
 		return "";

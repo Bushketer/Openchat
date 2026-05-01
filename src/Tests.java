@@ -7,7 +7,7 @@ public class Tests
 
 	public void messageServer(String ip, int port)
 	{
-		Network_Client client = new Network_Client();
+		NetworkClient client = new NetworkClient();
 		client.startConnection(ip, port);
 		
 		String response;

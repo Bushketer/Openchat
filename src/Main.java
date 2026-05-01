@@ -5,18 +5,20 @@ public class Main
 {
 	public static void main(String[] args)
 	{
+		Utility.setVerbose(true);
+
 		if(args.length == 1)
 		{
 			if(args[0].equals("Server"))
 			{
-				System.out.println("running server");
-				Network_Server server = new Network_Server();
+				Utility.toTerminaln("Running server");
+				NetworkServer server = new NetworkServer();
 				server.startServer(10800);
 			}
 		}
 		else
 		{
-			System.out.println("running client");
+			Utility.toTerminaln("Running client");
 			Tests test = new Tests();
 			test.messageServer("127.0.0.1", 10800);
 		}

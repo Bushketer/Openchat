@@ -10,6 +10,6 @@ fi
 options="-Xlint"
 javac $options *.java
 
-options="-f OpenChat.jar -c"
-jar $options *.java
+options="cvmf MANIFEST.MF OpenChat.jar"
+jar $options *.class
 chmod +x OpenChat.jar

@@ -7,5 +7,9 @@ else
 	echo "building locally"
 fi
 
-options="-d src/ -Xlint"
-javac *.java
+options="-Xlint"
+javac $options *.java
+
+options="-f OpenChat.jar -c"
+jar $options *.java
+chmod +x OpenChat.jar

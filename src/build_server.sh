@@ -7,5 +7,5 @@ else
 	echo "building locally"
 fi
 
-javac server.java
-jar cfe server.jar server server.class server\$ConnectionHandler.class
+javac server.java ServerChatRoom.java
+jar cfe server.jar server server.class server\$ConnectionHandler.class ServerChatRoom.class

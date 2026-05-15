@@ -23,7 +23,7 @@ public class client implements Runnable {
             while ((inMessage = in.readLine()) != null){
                 System.out.println(inMessage);
             }
-
+	
         } catch (IOException e) {
             shutdown();
         }
@@ -51,6 +51,7 @@ public class client implements Runnable {
                 while (!done){
                     String message = inReader.readLine();
                     if (message.equals("/quit")){
+			System.out.println("quiting???");
                         inReader.close();
                         shutdown();
                     } else {

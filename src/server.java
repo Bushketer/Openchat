@@ -5,18 +5,24 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class server implements Runnable{
 
     private ArrayList<ConnectionHandler> connections;
+    private Map<Integer, ConnectionHandler> clientIndexes;
     private ServerSocket server;
     private boolean done;
     private ExecutorService pool;
+    private ServerChatRoom chatRoom;
 
-    public server(){
+    public server() {
         connections = new ArrayList<>();
+	clientIndexes = new HashMap<Integer, ConnectionHandler>();
+	chatRoom = new ServerChatRoom();
         done = false;
     }
 
@@ -28,7 +34,15 @@ public class server implements Runnable{
             System.out.println("Server is running!");
             while (!done) {
                 Socket client = server.accept();
-                ConnectionHandler handler = new ConnectionHandler(client);
+
+		//TO-DO Update with authentication	
+		int newId = client.getPort();
+                ConnectionHandler handler = new ConnectionHandler(client, newId);
+
+		clientIndexes.put(newId, handler);
+		if(chatRoom.addToRoom(0, newId) == false)
+			System.out.println(newId + " failed");
+
                 connections.add(handler);
                 pool.execute(handler);
             }
@@ -37,16 +51,34 @@ public class server implements Runnable{
         }
     }
 
+
+
     public void broadcast(String message){
         for (ConnectionHandler ch : connections){
             if (ch != null){
                 ch.sendMessage(message);
-
-
             }
-
         }
     }
+	
+
+
+    public void broadcast(String message, int clientId)
+    {
+	ArrayList<Integer> indexes = chatRoom.getClientNeighbours(clientId);
+		
+	if(indexes == null)	
+		System.out.println(clientId + " not found in rooms");
+
+	for(int i = 0; i < indexes.size(); i++)
+	{
+		int id = indexes.get(i);
+		if(clientIndexes.get(id) != null)
+			clientIndexes.get(id).sendMessage(message);
+	}
+    }
+
+
 
     public void shutdown(){
         try {
@@ -70,10 +102,12 @@ public class server implements Runnable{
         private BufferedReader in;
         private PrintWriter out;
         private String nickname;
-        public ConnectionHandler(Socket client){
+	private int clientId;
+
+        public ConnectionHandler(Socket client, int id){
 
             this.client = client;
-
+	    this.clientId = id; 
         }
 
         @Override
@@ -96,13 +130,37 @@ public class server implements Runnable{
                             out.println("Successfully changed nickname to " + nickname);
                         } else {
                             out.println("No nickname provided");
-                        }
+			}
+		    } else if(message.startsWith("/join")) {
+			try
+			{
+				String messageSplit[] = message.split(" ", 2);
+				if(messageSplit.length == 2)
+				{
+					int newRoom = Integer.valueOf(messageSplit[1]);
+					chatRoom.createRoom(newRoom); //creates if not present
+					if(chatRoom.addToRoom(newRoom, clientId))
+					{
+						System.out.println(client + " joined " + newRoom);
+						out.println("Successfully joined room " + newRoom);
+					}
+				}
+				else
+					out.println("Incorrect room id");
+
+			}
+			//Could add another exception for failed join room
+			catch(NumberFormatException e)
+			{
+				System.out.println(e.toString());
+				out.println("Incorrect room id");
+			}
                     } else if (message.startsWith("/quit")){
                         broadcast(nickname + " left the chat!");
                         shutdown();
                     } else {
                         System.out.println(nickname + " : " + message);
-                        broadcast(nickname + " : " + message);
+                        broadcast(nickname + " : " + message, clientId);
                     }
                 }
             } catch (IOException e){
@@ -121,6 +179,7 @@ public class server implements Runnable{
             try {
                 in.close();
                 out.close();
+
                 if (!client.isClosed()) {
                     client.close();
                 }

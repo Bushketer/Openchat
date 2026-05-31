@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+if [[ -d src/ ]]; then
+	echo "building src/"
+	cd src/
+else
+	echo "building locally"
+fi
+
+options="-Xlint"
+javac $options *.java
+
+options="cvmf MANIFEST.MF OpenChat.jar"
+jar $options *.class
+chmod +x OpenChat.jar

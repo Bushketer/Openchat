@@ -17,7 +17,7 @@ public class server implements Runnable {
 
     //KEEP THIS SAFE PLS!!!
     private Utils utils = new Utils();
-    private SecretKey secret;
+    //private SecretKey secret;
     //private IvParameterSpec iv;
     private ArrayList<ConnectionHandler> connections;
     private Map<Integer, ConnectionHandler> clientIndexes;
@@ -25,17 +25,19 @@ public class server implements Runnable {
     private boolean done;
     private ExecutorService pool;
     private ServerChatRoom chatRoom;
-    private static final String SHARED_IV_STRING = "1234567890123456";
-    private IvParameterSpec iv = new IvParameterSpec(SHARED_IV_STRING.getBytes(StandardCharsets.UTF_8));
+    //private static final String SHARED_IV_STRING = "1234567890123456";
+    //private IvParameterSpec iv = new IvParameterSpec(SHARED_IV_STRING.getBytes(StandardCharsets.UTF_8));
     //private Utils utils = new Utils();
 
+    SecretHolder holder;
     public server() {
         connections = new ArrayList<>();
         clientIndexes = new HashMap<Integer, ConnectionHandler>();
         chatRoom = new ServerChatRoom();
         done = false;
+	holder = new SecretHolder();
         //utils = new Utils();
-        secret = utils.stringToKey("V0qLGapbAHw9Fbyh5yWgwA==");
+        //secret = utils.stringToKey("V0qLGapbAHw9Fbyh5yWgwA==");
         //iv = utils.generateIv();
     }
 
@@ -45,7 +47,7 @@ public class server implements Runnable {
             server = new ServerSocket(9999);
             pool = Executors.newCachedThreadPool();
             System.out.println("Server is running!");
-            System.out.println("Secret key: " + utils.keyToString(secret));
+            System.out.println("Secret key: " + utils.keyToString(holder.getSecret()));
             while (!done) {
                 Socket client = server.accept();
 
@@ -127,13 +129,13 @@ public class server implements Runnable {
                 sendMessage("Please enter a nickname: ");
                 //nickname = in.readLine();
                 byte[] secret_nickname = utils.base64_decode(in.readLine());
-                nickname = utils.decrypt(secret_nickname, secret, iv);
+                nickname = utils.decrypt(secret_nickname, holder.getSecret(), holder.getIv());
                 System.out.println(nickname + " connected!");
                 broadcast(nickname + " joined the chat!");
                 String message;
                 while ((message = in.readLine()) != null) {
                     byte[] secret_message = utils.base64_decode(message);
-                    message = utils.decrypt(secret_message, secret, iv);
+                    message = utils.decrypt(secret_message, holder.getSecret(), holder.getIv());
                     if (message.startsWith("/nick")) {
                         String[] messageSplit = message.split(" ", 2);
                         if (messageSplit.length == 2) {
@@ -178,7 +180,7 @@ public class server implements Runnable {
         }
 
         public void sendMessage(String message) {
-            byte[] encrypted_text = utils.encrypt(message, secret, iv);
+            byte[] encrypted_text = utils.encrypt(message, holder.getSecret(), holder.getIv());
             message = Utils.base64_encode(encrypted_text);
             out.println(message);
 

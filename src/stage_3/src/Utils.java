@@ -56,11 +56,11 @@ public class Utils {
         return decoded;
     }
 
-    public String keyToString(SecretKey secretKey) {
+    public static String keyToString(SecretKey secretKey) {
         return Base64.getEncoder().encodeToString(secretKey.getEncoded());
     }
 
-    public SecretKey stringToKey(String keyString) {
+    public static SecretKey stringToKey(String keyString) {
         byte[] decodedKey = Base64.getDecoder().decode(keyString);
         return new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
     }

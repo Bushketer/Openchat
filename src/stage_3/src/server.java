@@ -127,15 +127,28 @@ public class server implements Runnable {
                 out = new PrintWriter(client.getOutputStream(), true);
                 in = new BufferedReader(new InputStreamReader(client.getInputStream()));
                 sendMessage("Please enter a nickname: ");
-                //nickname = in.readLine();
-                byte[] secret_nickname = utils.base64_decode(in.readLine());
-                nickname = utils.decrypt(secret_nickname, holder.getSecret(), holder.getIv());
+                nickname = in.readLine();
+                //byte[] secret_nickname = utils.base64_decode(in.readLine());
+                //nickname = utils.decrypt(secret_nickname, holder.getSecret(), holder.getIv());
+		Packet packet = new Packet();
+		packet.setText(nickname);
+		Base64Compressor msg = new Base64Compressor(packet);
+		msg.base64_Text_Decode();
+		Encryptor crypt = new Encryptor(packet, holder);
+		crypt.decrypt();
+		nickname = packet.getText();	
+
                 System.out.println(nickname + " connected!");
                 broadcast(nickname + " joined the chat!");
                 String message;
                 while ((message = in.readLine()) != null) {
-                    byte[] secret_message = utils.base64_decode(message);
-                    message = utils.decrypt(secret_message, holder.getSecret(), holder.getIv());
+                    //byte[] secret_message = utils.base64_decode(message);
+                    //message = utils.decrypt(secret_message, holder.getSecret(), holder.getIv());
+		    packet.setText(message);
+		    msg.base64_Text_Decode();
+		    crypt.decrypt();
+		    message = packet.getText();
+
                     if (message.startsWith("/nick")) {
                         String[] messageSplit = message.split(" ", 2);
                         if (messageSplit.length == 2) {
@@ -180,9 +193,18 @@ public class server implements Runnable {
         }
 
         public void sendMessage(String message) {
-            byte[] encrypted_text = utils.encrypt(message, holder.getSecret(), holder.getIv());
-            message = Utils.base64_encode(encrypted_text);
-            out.println(message);
+            //byte[] encrypted_text = utils.encrypt(message, holder.getSecret(), holder.getIv());
+            //message = Utils.base64_encode(encrypted_text);
+	    Packet packet = new Packet();
+	    packet.setText(message);
+
+	    Encryptor crypt = new Encryptor(packet, holder);
+	    crypt.encrypt();
+
+	    Base64Compressor msg = new Base64Compressor(packet);
+	    msg.base64_Byte_Encode();
+
+            out.println(packet.getText());
 
 
         }

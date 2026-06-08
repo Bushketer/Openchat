@@ -4,7 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
-public class Encryptor
+public abstract class Encryptor implements Transmission
 {
 	Transmission input;
 	SecretHolder holder;
@@ -14,8 +14,11 @@ public class Encryptor
 	{
 		input = decorate;
 		holder = secret;
+		encryptor_Action();
 	}
+	
 
+	public abstract void encryptor_Action();
 	
 	//Return a cipher	
 	public void encrypt()
@@ -43,7 +46,7 @@ public class Encryptor
 		}
 	}
 
-
+	//SETTERS
 
 	public void setText(String text)
 	{
@@ -55,6 +58,7 @@ public class Encryptor
 		input.setCipher(cipher);
 	}
 
+	//GETTERS
 
 	public String getText()
 	{

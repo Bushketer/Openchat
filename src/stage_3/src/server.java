@@ -15,19 +15,12 @@ import java.util.concurrent.Executors;
 
 public class server implements Runnable {
 
-    //KEEP THIS SAFE PLS!!!
-    private Utils utils = new Utils();
-    //private SecretKey secret;
-    //private IvParameterSpec iv;
     private ArrayList<ConnectionHandler> connections;
     private Map<Integer, ConnectionHandler> clientIndexes;
     private ServerSocket server;
     private boolean done;
     private ExecutorService pool;
     private ServerChatRoom chatRoom;
-    //private static final String SHARED_IV_STRING = "1234567890123456";
-    //private IvParameterSpec iv = new IvParameterSpec(SHARED_IV_STRING.getBytes(StandardCharsets.UTF_8));
-    //private Utils utils = new Utils();
 
     SecretHolder holder;
     public server() {
@@ -36,9 +29,6 @@ public class server implements Runnable {
         chatRoom = new ServerChatRoom();
         done = false;
 	holder = new SecretHolder();
-        //utils = new Utils();
-        //secret = utils.stringToKey("V0qLGapbAHw9Fbyh5yWgwA==");
-        //iv = utils.generateIv();
     }
 
     @Override
@@ -47,7 +37,6 @@ public class server implements Runnable {
             server = new ServerSocket(9999);
             pool = Executors.newCachedThreadPool();
             System.out.println("Server is running!");
-            System.out.println("Secret key: " + utils.keyToString(holder.getSecret()));
             while (!done) {
                 Socket client = server.accept();
 
@@ -128,27 +117,21 @@ public class server implements Runnable {
                 in = new BufferedReader(new InputStreamReader(client.getInputStream()));
                 sendMessage("Please enter a nickname: ");
                 nickname = in.readLine();
-                //byte[] secret_nickname = utils.base64_decode(in.readLine());
-                //nickname = utils.decrypt(secret_nickname, holder.getSecret(), holder.getIv());
-		Packet packet = new Packet();
-		packet.setText(nickname);
-		Base64Compressor msg = new Base64Compressor(packet);
-		msg.base64_Text_Decode();
-		Encryptor crypt = new Encryptor(packet, holder);
-		crypt.decrypt();
+
+		Transmission packet = new DecryptAES( new Base64_Decoder(new Packet(nickname)), holder);
 		nickname = packet.getText();	
 
                 System.out.println(nickname + " connected!");
                 broadcast(nickname + " joined the chat!");
                 String message;
                 while ((message = in.readLine()) != null) {
-                    //byte[] secret_message = utils.base64_decode(message);
-                    //message = utils.decrypt(secret_message, holder.getSecret(), holder.getIv());
-		    packet.setText(message);
-		    msg.base64_Text_Decode();
-		    crypt.decrypt();
-		    message = packet.getText();
 
+		    packet.setText(message);
+		    packet = new DecryptAES( new Base64_Decoder(packet), holder);
+		    message = packet.getText();
+			
+		    //TO-DO try implementing a command pattern
+		    //Trickiest part is returning the result
                     if (message.startsWith("/nick")) {
                         String[] messageSplit = message.split(" ", 2);
                         if (messageSplit.length == 2) {
@@ -174,6 +157,7 @@ public class server implements Runnable {
 
                         }
                         //Could add another exception for failed join room
+			//TO-DO add an OutOfBoundsException
                         catch (NumberFormatException e) {
                             System.out.println(e.toString());
                             out.println("Incorrect room id");
@@ -193,16 +177,7 @@ public class server implements Runnable {
         }
 
         public void sendMessage(String message) {
-            //byte[] encrypted_text = utils.encrypt(message, holder.getSecret(), holder.getIv());
-            //message = Utils.base64_encode(encrypted_text);
-	    Packet packet = new Packet();
-	    packet.setText(message);
-
-	    Encryptor crypt = new Encryptor(packet, holder);
-	    crypt.encrypt();
-
-	    Base64Compressor msg = new Base64Compressor(packet);
-	    msg.base64_Byte_Encode();
+	    Transmission packet = new Base64_Encoder( new EncryptAES( new Packet(message), holder) );
 
             out.println(packet.getText());
 

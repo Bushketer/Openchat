@@ -11,12 +11,6 @@ public class client implements Runnable {
     private BufferedReader in;
     private PrintWriter out;
     private boolean done = false;
-    //keep this safe!
-    //private SecretKey secret = utils.stringToKey("V0qLGapbAHw9Fbyh5yWgwA==");
-    //private IvParameterSpec iv = utils.generateIv();
-    //private static final String SHARED_IV_STRING = "1234567890123456";
-    //private IvParameterSpec iv = new IvParameterSpec(SHARED_IV_STRING.getBytes(StandardCharsets.UTF_8));
-	
     SecretHolder holder = new SecretHolder();
 
 
@@ -33,17 +27,21 @@ public class client implements Runnable {
 
             String inMessage;
             while ((inMessage = in.readLine()) != null) {
-                //byte[] secret_message = utils.base64_decode(inMessage);
-                //inMessage = utils.decrypt(secret_message, holder.getSecret(), holder.getIv());
+		/*
 		Packet packet = new Packet();
 		packet.setText(inMessage);
 		Base64Compressor msg = new Base64Compressor(packet);
 		msg.base64_Text_Decode();
-		//packet.setText(utils.decrypt(msg.getCipher(), holder.getSecret(), holder.getIv()));
 		Encryptor crypt = new Encryptor(packet, holder);
 		crypt.decrypt();
+		*/
 
+		Transmission packet = new DecryptAES(new Base64_Decoder(new Packet(inMessage)), holder);
 
+		//TO-DO create a message formater / parser
+		//Output different color text
+		//Seperate coloring with " : " 
+		//NAME (YELLOW) : MESSAGE (RED)
                 System.out.println(packet.getText());
             }
 
@@ -74,21 +72,26 @@ public class client implements Runnable {
                 BufferedReader inReader = new BufferedReader(new InputStreamReader(System.in));
                 while (!done) {
                     String message = inReader.readLine();
-		    Packet packet = new Packet();
-		    packet.setText(message);
 
                     if (message.equals("/quit")) {
                         inReader.close();
                         shutdown();
                     } else {
+			
                         //byte[] encrypted_text = utils.encrypt(message, holder.getSecret(), holder.getIv());
                         //message = Utils.base64_encode(encrypted_text);
 			//packet.setCipher(utils.encrypt(message, holder.getSecret(), holder.getIv()));
+			/*
 			Encryptor crypt = new Encryptor(packet, holder);
 			crypt.encrypt();
 			Base64Compressor msg = new Base64Compressor(packet);
 			msg.base64_Byte_Encode();
-                        out.println(msg.getText());
+			*/
+			
+			Transmission packet = new Base64_Encoder(new EncryptAES(new Packet(message), holder));
+			
+
+                        out.println(packet.getText());
                     }
                 }
             } catch (IOException e) {

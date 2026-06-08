@@ -9,6 +9,7 @@ import java.security.SecureRandom;
 import java.util.Base64;
 
 public class Utils {
+/*
     public static SecretKey generateKey() {
         try {
             KeyGenerator keygenerator = KeyGenerator.getInstance("AES");
@@ -55,7 +56,7 @@ public class Utils {
         byte[] decoded = Base64.getDecoder().decode(encoded);
         return decoded;
     }
-
+*/
     public static String keyToString(SecretKey secretKey) {
         return Base64.getEncoder().encodeToString(secretKey.getEncoded());
     }

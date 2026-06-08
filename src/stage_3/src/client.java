@@ -23,7 +23,7 @@ public class client implements Runnable {
     @Override
     public void run() {
         try {
-            Socket client = new Socket("127.0.0.1", 9999);
+            client = new Socket("127.0.0.1", 9999);
             out = new PrintWriter(client.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
@@ -62,6 +62,7 @@ public class client implements Runnable {
             }
         } catch (IOException e) {
             // ignore
+	    System.out.println(e.toString());
         }
     }
 
@@ -77,7 +78,6 @@ public class client implements Runnable {
 		    packet.setText(message);
 
                     if (message.equals("/quit")) {
-                        System.out.println("quiting???");
                         inReader.close();
                         shutdown();
                     } else {

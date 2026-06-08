@@ -19,32 +19,6 @@ public abstract class Encryptor implements Transmission
 	
 
 	public abstract void encryptor_Action();
-	
-	//Return a cipher	
-	public void encrypt()
-	{
-		try {
-		    Cipher cipher = Cipher.getInstance("AES/CFB8/NoPadding");
-		    cipher.init(Cipher.ENCRYPT_MODE, holder.getSecret(), holder.getIv());
-		    setCipher(cipher.doFinal(input.getText().getBytes(StandardCharsets.UTF_8)));
-		} catch (Exception e){
-		    throw new RuntimeException("Failed to encrypt text", e);
-		}
-	}
-		
-
-	//Return Text	
-	public void decrypt()
-	{
-		try {
-		    Cipher cipher = Cipher.getInstance("AES/CFB8/NoPadding");
-		    cipher.init(Cipher.DECRYPT_MODE, holder.getSecret(), holder.getIv());
-		    byte[] plainText = cipher.doFinal(input.getCipher());
-		    setText(new String(plainText));
-		} catch (Exception e){
-		    throw new RuntimeException("Failed to decrypt text", e);
-		}
-	}
 
 	//SETTERS
 

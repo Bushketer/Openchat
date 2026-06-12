@@ -16,6 +16,8 @@ public class client implements Runnable {
     private Encryption crypt = new Encryption();
     private BaseEncoding base = new BaseEncoding();
 
+    private Terminal term;
+
 
     @Override
     public void run() {
@@ -27,17 +29,19 @@ public class client implements Runnable {
             InputHandler inputHandler = new InputHandler();
             Thread t = new Thread(inputHandler);
             t.start();
+	    term = new Terminal();
+
+	    //Show and initialize fonts
+	    FontThemes.initialize();
+	    FontThemes.showcase();
 
             String inMessage;
             while ((inMessage = in.readLine()) != null) {
 
 		Transmission packet = crypt.new DecryptAES( base.new Decoder64(new Packet(inMessage)), holder);
 
-		//TO-DO create a message formater / parser
-		//Output different color text
-		//Seperate coloring with " : " 
 		//NAME (YELLOW) : MESSAGE (RED)
-                System.out.println(packet.getText());
+                term.printUserMessage(packet.getText());
             }
 
         } catch (IOException e) {
@@ -64,6 +68,7 @@ public class client implements Runnable {
         @Override
         public void run() {
             try {
+		int msg_count  = 0;
                 BufferedReader inReader = new BufferedReader(new InputStreamReader(System.in));
                 while (!done) {
                     String message = inReader.readLine();
@@ -71,11 +76,20 @@ public class client implements Runnable {
                     if (message.equals("/quit")) {
                         inReader.close();
                         shutdown();
-                    } else {
+	    	    }
+		    else if (message.startsWith(FontThemes.FONT_CHANGE_CMD)){
+
+			String index = message.substring(FontThemes.FONT_CHANGE_CMD.length());
+
+			if(index != null)
+				term.newFont(FontThemes.selectFont(Integer.valueOf(index)));
+			
+			term.testTheme();
+                    } 
+		    else {
 			
 			Transmission packet = base.new Encoder64( crypt.new EncryptAES(new Packet(message), holder));
 			
-
                         out.println(packet.getText());
                     }
                 }

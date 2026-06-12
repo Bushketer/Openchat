@@ -7,8 +7,8 @@ else
         echo "building locally"
 fi
 
-javac client.java Utils.java SecretHolder.java Packet*.java Base*.java Transmission.java *crypt*.java
-jar cfe client.jar client client.class client\$InputHandler.class Utils.class SecretHolder.class Packet*.class Base*.class Transmission.class *crypt*.class
+javac client.java Utils.java SecretHolder.java Packet*.java Base*.java Transmission.java *crypt*.java Terminal.java *Font*.java
+jar cfe client.jar client client.class client\$InputHandler.class Utils.class SecretHolder.class Packet*.class Base*.class Transmission.class *crypt*.class Terminal.class *Font*.class
 
 
 

@@ -142,7 +142,10 @@ public class server implements Runnable {
                             broadcast(nickname + " renamed themselves to " + messageSplit[1]);
                             System.out.println(nickname + " renamed themselves to " + messageSplit[1]);
                             nickname = messageSplit[1];
-                            out.println("Successfully changed nickname to " + nickname);
+			    String msg = "Successfully changed nickname to " + nickname;
+
+		    	    packet = base.new Encoder64( crypt.new EncryptAES( new Packet(msg), holder) );
+                            out.println(packet.getText());
                         } else {
                             out.println("No nickname provided");
                         }
@@ -154,9 +157,22 @@ public class server implements Runnable {
                                 chatRoom.createRoom(newRoom); //creates if not present
                                 if (chatRoom.addToRoom(newRoom, clientId)) {
                                     System.out.println(client + " joined " + newRoom);
-                                    out.println("Successfully joined room " + newRoom);
-                                }
-                            } else
+					
+				    String msg = "Successfully joined room " + newRoom;
+				    packet = base.new Encoder64( crypt.new EncryptAES( new Packet(msg), holder) );
+				    out.println(packet.getText());
+                                } 
+				else {
+					String msg = "Failed to join room. Check Room limits";
+					packet = base.new Encoder64( crypt.new EncryptAES( new Packet(msg), holder) );
+					out.println(packet.getText());
+
+					msg = chatRoom.toString();
+					packet = base.new Encoder64( crypt.new EncryptAES( new Packet(msg), holder) );
+					out.println(packet.getText());
+				}
+                            } 
+			    else
                                 out.println("Incorrect room id");
 
                         }
@@ -164,7 +180,8 @@ public class server implements Runnable {
 			//TO-DO add an OutOfBoundsException
                         catch (NumberFormatException e) {
                             System.out.println(e.toString());
-                            out.println("Incorrect room id");
+			    packet = base.new Encoder64( crypt.new EncryptAES( new Packet("Incorrect room id"), holder) );
+                            out.println(packet.getText());
                         }
                     } else if (message.startsWith("/quit")) {
                         broadcast(nickname + " left the chat!");

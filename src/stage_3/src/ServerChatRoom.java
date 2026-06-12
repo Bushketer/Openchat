@@ -7,8 +7,8 @@ import java.util.Map;
 
 public class ServerChatRoom
 {
-	private int MAXCLIENTS;
-	private int MAXROOMS;
+	private static int MAXCLIENTS;
+	private static int MAXROOMS;
 	
 	//For scale a dictionary/map would be better
 	//And a createRoom(int) function would be needed
@@ -55,8 +55,37 @@ public class ServerChatRoom
 		else
 			return null;
 	}
+	
+
+	
+	public static int getMaxRooms()
+	{
+		return MAXROOMS;
+	}
+
+	public static int getMaxClientPerRoom()
+	{
+		return MAXCLIENTS;
+	}
 
 
+
+	public int getRoomClientCount(int roomId)
+	{
+		if(roomId < MAXROOMS && clientList[roomId] != null)
+			return clientList[roomId].size();
+		else
+			return 0;
+	}
+	
+	
+	public String toString()
+	{
+		String object = "0/" + String.valueOf(MAXROOMS - 1) + " ROOMS, ";
+		object += "0th room clients: " + String.valueOf(getRoomClientCount(0)) + "/" + String.valueOf(MAXCLIENTS);
+		return object;
+	}
+	
 
 	public void createRoom(int roomId)
 	{
@@ -68,7 +97,7 @@ public class ServerChatRoom
 	//Transfers to a room if already present
 	public Boolean addToRoom(int roomId, int clientId)
 	{
-		if(roomId >= MAXROOMS && clientList[roomId] != null && clientList[roomId].size() >= MAXCLIENTS)
+		if(roomId >= MAXROOMS || clientList[roomId] == null || clientList[roomId].size() >= MAXCLIENTS)
 			return false;
 
 		if(clientRooms.get(clientId) != null)

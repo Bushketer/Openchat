@@ -22,6 +22,7 @@ public class server implements Runnable {
     private ExecutorService pool;
     private ServerChatRoom chatRoom;
 
+
     SecretHolder holder;
     public server() {
         connections = new ArrayList<>();
@@ -104,6 +105,9 @@ public class server implements Runnable {
         private String nickname;
         private int clientId;
 
+	private Encryption crypt = new Encryption();
+	private BaseEncoding base = new BaseEncoding();
+
         public ConnectionHandler(Socket client, int id) {
 
             this.client = client;
@@ -118,7 +122,7 @@ public class server implements Runnable {
                 sendMessage("Please enter a nickname: ");
                 nickname = in.readLine();
 
-		Transmission packet = new DecryptAES( new Base64_Decoder(new Packet(nickname)), holder);
+		Transmission packet = crypt.new DecryptAES( base.new Decoder64(new Packet(nickname)), holder);
 		nickname = packet.getText();	
 
                 System.out.println(nickname + " connected!");
@@ -127,7 +131,7 @@ public class server implements Runnable {
                 while ((message = in.readLine()) != null) {
 
 		    packet.setText(message);
-		    packet = new DecryptAES( new Base64_Decoder(packet), holder);
+		    packet = crypt.new DecryptAES( base.new Decoder64(packet), holder);
 		    message = packet.getText();
 			
 		    //TO-DO try implementing a command pattern
@@ -177,11 +181,9 @@ public class server implements Runnable {
         }
 
         public void sendMessage(String message) {
-	    Transmission packet = new Base64_Encoder( new EncryptAES( new Packet(message), holder) );
+	    Transmission packet = base.new Encoder64( crypt.new EncryptAES( new Packet(message), holder) );
 
             out.println(packet.getText());
-
-
         }
 
         public void shutdown() {

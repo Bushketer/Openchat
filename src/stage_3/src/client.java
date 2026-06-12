@@ -11,7 +11,10 @@ public class client implements Runnable {
     private BufferedReader in;
     private PrintWriter out;
     private boolean done = false;
-    SecretHolder holder = new SecretHolder();
+    private SecretHolder holder = new SecretHolder();
+	
+    private Encryption crypt = new Encryption();
+    private BaseEncoding base = new BaseEncoding();
 
 
     @Override
@@ -27,16 +30,8 @@ public class client implements Runnable {
 
             String inMessage;
             while ((inMessage = in.readLine()) != null) {
-		/*
-		Packet packet = new Packet();
-		packet.setText(inMessage);
-		Base64Compressor msg = new Base64Compressor(packet);
-		msg.base64_Text_Decode();
-		Encryptor crypt = new Encryptor(packet, holder);
-		crypt.decrypt();
-		*/
 
-		Transmission packet = new DecryptAES(new Base64_Decoder(new Packet(inMessage)), holder);
+		Transmission packet = crypt.new DecryptAES( base.new Decoder64(new Packet(inMessage)), holder);
 
 		//TO-DO create a message formater / parser
 		//Output different color text
@@ -78,17 +73,7 @@ public class client implements Runnable {
                         shutdown();
                     } else {
 			
-                        //byte[] encrypted_text = utils.encrypt(message, holder.getSecret(), holder.getIv());
-                        //message = Utils.base64_encode(encrypted_text);
-			//packet.setCipher(utils.encrypt(message, holder.getSecret(), holder.getIv()));
-			/*
-			Encryptor crypt = new Encryptor(packet, holder);
-			crypt.encrypt();
-			Base64Compressor msg = new Base64Compressor(packet);
-			msg.base64_Byte_Encode();
-			*/
-			
-			Transmission packet = new Base64_Encoder(new EncryptAES(new Packet(message), holder));
+			Transmission packet = base.new Encoder64( crypt.new EncryptAES(new Packet(message), holder));
 			
 
                         out.println(packet.getText());

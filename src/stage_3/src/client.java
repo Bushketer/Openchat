@@ -80,9 +80,11 @@ public class client implements Runnable {
 		    else if (message.startsWith(FontThemes.FONT_CHANGE_CMD)){
 
 			String index = message.substring(FontThemes.FONT_CHANGE_CMD.length());
+			if(index == null)
+				return;
 
-			if(index != null)
-				term.newFont(FontThemes.selectFont(Integer.valueOf(index)));
+			int id = Integer.valueOf(index);
+			term.newFont(FontThemes.selectFont(id));
 			
 			term.testTheme();
                     } 
@@ -94,8 +96,12 @@ public class client implements Runnable {
                     }
                 }
             } catch (IOException e) {
-
+		
             }
+	    catch(NumberFormatException e) {
+		term.println("Fonts are indexed with numbers");
+		run();
+	    }
         }
     }
 

@@ -29,7 +29,10 @@ public class Terminal
 
 	public void newFont(TerminalFont font)
 	{
-		this.font = font;
+		if(font != null)
+			this.font = font;
+		else
+			this.font = new TerminalFont();
 	}
 
 	

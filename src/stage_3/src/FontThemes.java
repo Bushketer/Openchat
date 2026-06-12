@@ -70,7 +70,7 @@ public class FontThemes
 	
 	public static TerminalFont selectFont(int id)
 	{
-		if(id < fonts.size() && id > 0)
+		if(id < fonts.size() && id >= 0)
 			return fonts.get(id);
 
 		return null;

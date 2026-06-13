@@ -5,7 +5,7 @@ import java.util.List;
 
 public class FontThemes
 {
-	static ArrayList<TerminalFont> fonts = new ArrayList<TerminalFont>();
+	private static ArrayList<TerminalFont> fonts = new ArrayList<TerminalFont>();
 	final static String FONT_CHANGE_CMD = "#font ";
 
 

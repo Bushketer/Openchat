@@ -3,12 +3,6 @@ import java.lang.String;
 
 public class Terminal
 {
-	
-	static final int PRIMARY = 0;
-	static final int SECONDARY = 1;
-	private static String color_first = TerminalFont.DEFAULT_COLOR; 
-	private static String color_second = TerminalFont.DEFAULT_COLOR;
-
 	private TerminalFont font;
 	
 	//TO-DO

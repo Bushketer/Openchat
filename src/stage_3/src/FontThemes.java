@@ -92,12 +92,4 @@ public class FontThemes
 
 		term.println(FONT_CHANGE_CMD + "{number} to select a font");
 	}
-
-
-
-	public static void main(String[] args)
-	{
-		showcase();
-	}
-
 }

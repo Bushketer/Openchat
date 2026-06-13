@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets;
 
 public class client implements Runnable {
 
-    private Utils utils = new Utils();
     private Socket client;
     private BufferedReader in;
     private PrintWriter out;

@@ -71,13 +71,4 @@ public class Terminal
 		else
 			println(message);
 	}
-	
-	/*
-	public static void main(String[] args)
-	{
-		Terminal term = new Terminal("33m", "32m");
-		System.out.println(color_first + "hello" + COLOR_RESET);
-		term.printUserMessage("Annon : Hello");
-	}
-	*/
 }

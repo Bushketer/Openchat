@@ -71,7 +71,8 @@ public class client implements Runnable {
                 BufferedReader inReader = new BufferedReader(new InputStreamReader(System.in));
                 while (!done) {
                     String message = inReader.readLine();
-
+			
+		    //TO-DO implement a command pattern
                     if (message.equals("/quit")) {
                         inReader.close();
                         shutdown();

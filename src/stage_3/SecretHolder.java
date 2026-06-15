@@ -6,6 +6,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Base64;
 
 
 public class SecretHolder
@@ -19,8 +20,12 @@ public class SecretHolder
 	{
 		//Get key from file
 		//UNSAFE METHOD
+		//TO-DO load from file
 		String key = "V0qLGapbAHw9Fbyh5yWgwA==";
-		secret = Utils.stringToKey(key);
+		//Convert to secret
+		byte[] decodedKey = Base64.getDecoder().decode(key);
+		secret = new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
+
 		iv = new IvParameterSpec(SHARED_IV_STRING.getBytes(StandardCharsets.UTF_8));
 
 		//TO-DO dynamic keys

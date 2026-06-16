@@ -120,14 +120,19 @@ public class server implements Runnable {
                 out = new PrintWriter(client.getOutputStream(), true);
                 in = new BufferedReader(new InputStreamReader(client.getInputStream()));
                 sendMessage("Please enter a nickname: ");
-                nickname = in.readLine();
-
-		Transmission packet = crypt.new DecryptAES( base.new Decoder64(new Packet(nickname)), holder);
-		nickname = packet.getText();	
-
-                System.out.println(nickname + " connected!");
-                broadcast(nickname + " joined the chat!");
                 String message;
+		Transmission packet = new Packet();
+                nickname = in.readLine();
+		
+		if(nickname != null)
+		{
+			packet = crypt.new DecryptAES( base.new Decoder64(new Packet(nickname)), holder);
+			nickname = packet.getText();	
+
+			System.out.println(nickname + " connected!");
+			broadcast(nickname + " joined the chat!");
+		}
+
                 while ((message = in.readLine()) != null) {
 
 		    packet.setText(message);

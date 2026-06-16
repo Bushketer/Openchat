@@ -86,6 +86,7 @@ public class client implements Runnable {
 			int id = Integer.valueOf(index);
 			term.newFont(FontThemes.selectFont(id));
 			
+			term.println("Hello");
 			term.testTheme();
                     } 
 		    else {
